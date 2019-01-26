@@ -107,3 +107,4 @@ venv.bak/
 ig_*
 *_job/
 *.chls
+_*/
