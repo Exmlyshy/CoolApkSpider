@@ -25,22 +25,33 @@ class CloseMiddlerWare(object):
 
 class TokenMiddleware(object):
 
-    def __init__(self, redis_uri):
+    token_list: list
+
+    def __init__(self, token_list):
         self.logger = logging.getLogger(__name__)
-        self.db = StrictRedis(redis_uri)
+        # self.db = StrictRedis(redis_uri)
+        self.token_list=token_list
 
     @classmethod
     def from_crawler(cls, crawler):
+        redis=StrictRedis(crawler.settings.get('REDIS_URI'))
+        try:
+            token_list = redis.lrange('token', 0, redis.llen('token'))
+        except Exception as e:
+            raise e
+
         return cls(
-            crawler.settings.get('REDIS_URI'),
+            token_list
         )
 
-    def _get_token(self):
-        token = self.db.get('token')
-        return token
+    def _get_token(self,token_list):
+        for token in token_list:
+            token_time = token[-10:].decode('utf-8')
+            if abs(time.time() - int(token_time, base=16)) < 4 * 60:
+                return token.decode('utf-8')
 
     def process_request(self, request, spider):
-        token = self._get_token()
+        token = self._get_token(self.token_list)
         if token:
             self.logger.info('Get token:%s' % token)
             request.headers['x-app-token'] = token
@@ -56,7 +67,7 @@ class TokenMiddleware(object):
             spider.error_count += 1
             time.sleep(2)
             try:
-                token = self._get_token()
+                token = self._get_token(self.token_list)
                 if token:
                     self.logger.info('Get token:%s' % token)
                     request.headers['x-app-token'] = token
