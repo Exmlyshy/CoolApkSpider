@@ -20,7 +20,7 @@ def csv_write(fp,data):
 if __name__ == '__main__':
 
     users=collection.find().sort('feed',pymongo.DESCENDING).limit(100)
-    filename = 'fans_top100.csv'
+    filename = 'feed_top100.csv'
     fp = open(filename, 'w', encoding='utf-8', newline='')
     csv_write(fp, users)
     client.close()
