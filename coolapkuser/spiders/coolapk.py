@@ -26,11 +26,7 @@ class CoolapkSpider(scrapy.Spider):
 
     def start_requests(self):
         user_url = self.user_url.format(uid=self.start_uid)
-        # follow_url = self.follow_url.format(uid=self.start_uid, page=1)
-        # fans_url = self.fans_url.format(uid=self.start_uid, page=1)
         yield scrapy.Request(user_url, callback=self.parse_user)
-        # yield scrapy.Request(follow_url, callback=self.parse_follows)
-        # yield scrapy.Request(fans_url, callback=self.parse_fans)
 
     def parse_user(self, response):
 
