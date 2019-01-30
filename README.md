@@ -18,6 +18,14 @@
 
 ![原理](https://raw.githubusercontent.com/Exmlyshy/cool/master/coolapk/cool.gif)
 
+其中，酷安的api通过对app抓包可知，但是Request头中有一个token难以构造（因为看不到源代码），从观测可知其后一部分是时间戳的16进制，中间应该也是时间相关，前一部分应该是sha1摘要
+
+，但构造不出来也不影响，使用adb+mitmdump也可以自动生成获取。
+
+
+
+
+
 爬取的数据如下：
 
 - 地区分布
